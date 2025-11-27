@@ -1,11 +1,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
-typedef struct{
+#include "moduleRegisterClient.h"
+/*typedef struct{
   char nome[20], email[25],senha[9],regiao;
   int idade,id; 
-}Dados;
+}Dados;*/
 
 
 void cadastroCliente(char *nome,char *email,char *senha,char regiao,int idade){
