@@ -2,6 +2,11 @@
 #define MODULE_REGISTER_CLIENT_H
 
 typedef struct{
+  int id;
+  long pos;
+}Index;
+
+typedef struct{
   char nome[20],email[25],senha[9],regiao;
   int idade,id;
 }Dados;
