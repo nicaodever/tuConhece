@@ -1,0 +1,2 @@
+1;2031032;92;12;Nicolas Pimentel;nicolas@gmail.com;nic211205;msmcasicm;9
+2;123210321;321321;14;Rafael;rafael@gmail.com;12345;Manjo de canos;s
