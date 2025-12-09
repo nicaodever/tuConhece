@@ -4,67 +4,78 @@
 #include "moduleRegisterUser.h"
 #include "moduleRegisterClient.h"
 int main(){
-    int opcao, idade, cpf, contato;
-    char nome[50], email[50], descricao[200], regiao;
+    int opcao, idade;
+    long long int contato, cpf;
+    char nome[50], email[50], descricao[200], senha[20], regiao;
 
-    acessarUsuarios();
+    acessarProfis(); //Carrega dados ao iniciar
 
     do{
-        printf("\n--- MENU DE CADASTRO ---\n");
+        printf("\n--- MENU PRINCIPAL ---\n");
         printf("1. Cadastrar novo usuario\n");
-        printf("2. Listar usuarios\n");
-        printf("3. Salvar dados em arquivo\n");
-        printf("0. Sair (Salvar dados e liberar memoria)\n");
+        printf("2. Listar usuarios (Publico)\n");
+        printf("3. Realizar Login (Admin ou Usuario)\n");
+        printf("0. Sair\n");
         printf("Escolha uma opcao: ");
 
-        if(scanf("%d", &opcao)!=1){ //Lê a opção e limpa o buffer
-            opcao=-1; //caso ele leia um número define como invalida e limpa o buffer
+        if(scanf("%d", &opcao) != 1){
+            opcao = -1;
         }
-        while(getchar()!='\n');
+        while(getchar() != '\n'); 
 
         switch(opcao){
             case 1:
-                printf("Informe o nome:");
+                printf("Digite seu nome: ");
                 fgets(nome, sizeof(nome), stdin);
-                nome[strcspn(nome, "\n")]='\0'; //remove o enter e adiciona o final da string
+                nome[strcspn(nome, "\n")] = '\0';
 
-                printf("Informe o email:");
+                printf("Informe um email: ");
                 fgets(email, sizeof(email), stdin);
-                email[strcspn(email, "\n")]='\0';
+                email[strcspn(email, "\n")] = '\0';
 
-                printf("Informe uma descricao concisa:");
+                printf("Defina uma senha: ");
+                fgets(senha, sizeof(senha), stdin);
+                senha[strcspn(senha, "\n")] = '\0';
+
+                printf("Habilidades (descricao): ");
                 fgets(descricao, sizeof(descricao), stdin);
-                descricao[strcspn(descricao, "\n")]='\0';
+                descricao[strcspn(descricao, "\n")] = '\0';
 
-                printf("Qual sua idade?");
+                printf("Qual sua idade? ");
                 scanf("%d", &idade);
                 
-                printf("Informe seu CPF:");
-                scanf("%d", &cpf);
+                printf("Informe seu CPF: ");
+                scanf("%lld", &cpf);
 
-                printf("Informe seu numero de contato:");
-                scanf("%d", &contato);
-                getchar();  //limpando o buffer
-                printf("Informe sua zona com apenas uma letra(Norte (n), Sul(s), Leste(l), Oeste(o)):");
-                scanf("%c", &regiao);
+                printf("Informe seu numero de contato: ");
+                scanf("%lld", &contato);
+                
+                printf("Informe sua zona (Norte (n), Sul(s), Leste(l), Oeste(o)): ");
+                scanf(" %c", &regiao);
 
-                adicionarUsuario(cpf, contato, idade, regiao, nome, email, descricao);
+                while(getchar() != '\n');//para evitar levar lixo para o menu
+
+                addUsuario(senha, cpf, contato, idade, regiao, nome, email, descricao);
                 break;
+
             case 2:
                 listarUsuarios();
                 break;
+
             case 3:
-                salvar_cadastros();
+                profisLogin();
                 break;
+
             case 0:
-                salvar_cadastros();
+                cadastroProfis(); //salva antes de sair
                 liberarMem();
                 printf("Programa encerrado.\n");
                 break;
+
             default:
                 printf("Opcao invalida. Tente novamente.\n");
         }
-    }while(opcao!=0);
+    } while(opcao != 0);
 
     return 0;
 }

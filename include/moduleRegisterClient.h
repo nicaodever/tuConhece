@@ -8,12 +8,13 @@ typedef struct{
 
 typedef struct{
   char nome[20],email[25],senha[9],regiao;
-  int idade,id;
+  int id;
 }Dados;
 
-void cadastroCliente(char *nome,char *email,char *senha,char regiao,int idade);
-
-int loginCliente(char *email,char *senha);
-
+void cadastroCliente(char *nome,char *email,char *senha,char regiao);
+void loginCliente(char *email,char *senha);
+int idCliente();
+void perfilCliente();
+void atualizarDados();
 
 #endif

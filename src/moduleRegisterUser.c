@@ -1,176 +1,256 @@
-//SISTEMA DE CADASTRO
 #include<stdio.h>
 #include<stdlib.h>
 #include<string.h>
 #include "moduleRegisterUser.h"
-#define NOME_ARQUIVO "cadastro_profissional.txt"
-
+#define NOME_ARQUIVO "cadProfiss.txt"
+#define ADMIN_EMAIL "adm"//login do administrador
+#define ADMIN_SENHA "adm123"//senha do adm           
 
 //Variáveis globais
-NoUsuario *inicioUs=NULL; //Ponteiro para o bloco de cada usuário
-int proxID=1; //Para controlar o cadastro de cada usuario
+NoUsuario *inicioUs = NULL;
+int proxID = 1;
 
-
-
-void salvar_cadastros(){  //procedimento salvar os cadastros no arquivo
+//procedimento para cadastrar o profissional
+void cadastroProfis(){  
     FILE *arquivo = fopen(NOME_ARQUIVO, "w");
-    if(arquivo==NULL){
+    if(arquivo == NULL){
         printf("Erro ao abrir o arquivo para escrita");
         return;
     }
 
-    NoUsuario *atual = inicioUs; //Faz com que a variavel global não perca a referencia do inicio 
+    NoUsuario *atual = inicioUs;
     int cont = 0;
 
-    while(atual != NULL){   //repetição para acessar os elementos da lista encadeada
-        fprintf(arquivo, "%d;%d;%d;%d;%s;%s;%s;%c\n", atual->dados.id, atual->dados.cpf, atual->dados.contato, atual->dados.idade, atual->dados.nome, atual->dados.email, atual->dados.descricao, atual->dados.regiao);
-        atual=atual->proximo;   //avança na lista encadeada para o próximo usuário
+    while(atual != NULL){
+        fprintf(arquivo, "%d;%lld;%lld;%d;%s;%s;%s;%s;%c\n", atual->dados.id, atual->dados.cpf, atual->dados.contato, atual->dados.idade, atual->dados.nome, atual->dados.email, atual->dados.senha, atual->dados.descricao, atual->dados.regiao);
+        atual = atual->proximo;
         cont++;
     }
 
     fclose(arquivo);
-    printf("\n%d usuarios salvos no arquivo.\n", cont);
+    printf("\n| %d usuarios salvos |\n", cont);
 }
 
-void acessarUsuarios(){
-    //chamando o procedimento para liberar memória antes de carregar o arquivo
-    if(inicioUs!=NULL){
-        liberarMem();//chamando a função para abrir espaço na memória
+//procedimento para acessar as informações dos usuário no arquivo (carregamento dos dados)
+void acessarProfis(){
+    if(inicioUs != NULL){
+        liberarMem();//chamando procedimento para liberar memória
     }
 
-    FILE *arquivo = fopen(NOME_ARQUIVO, "r"); //Leitura do arquivo
-
-    if(arquivo==NULL){
-        printf("\nArquivo nao econtrado.\n");
+    FILE *arquivo = fopen(NOME_ARQUIVO, "r");
+    if(arquivo == NULL){
+        printf("\nArquivo de cadastro nao encontrado (sera criado ao salvar).\n");
         return;
     }
 
-    usuario tempUs; //variavel temporaria
-    int cont=0;
+    usuario tempUs;
+    int cont = 0;
+    int maiorID = 0; // Para ajustar o proxID corretamente
 
-    while(fscanf(arquivo, "%d;%d;%d;%d;%c;%50[^;];%50[^;];%200[^\n]\n", &tempUs.id, &tempUs.cpf, &tempUs.contato, &tempUs.idade, tempUs.nome, tempUs.email, tempUs.descricao, tempUs.regiao)==8){
-        //Aloca um novo Nó usando MALLOC
-        NoUsuario *novoNo = (NoUsuario *)malloc(sizeof(NoUsuario));
-        if(novoNo==NULL){
-            printf("Falha na alocacao de memoria");
+//lê o arquivo seguindo o padrão definindo por (;) e verificando se foi lido a qtd certa (9) de informações
+    while(fscanf(arquivo, "%d;%lld;%lld;%d;%50[^;];%50[^;];%20[^;];%200[^;];%c\n", &tempUs.id, &tempUs.cpf, &tempUs.contato, &tempUs.idade, tempUs.nome, tempUs.email, tempUs.senha, tempUs.descricao, &tempUs.regiao) == 9){
+        
+        NoUsuario *novoNo = (NoUsuario *)malloc(sizeof(NoUsuario));//solicitando memória do sistema para criar um novo Nó
+        if(novoNo == NULL) //caso não haja memória e o procedimento não trave o sistema
             break;
+
+        novoNo->dados = tempUs;//transfere as informações da variavel tempUs para dentro do novo Nó
+        novoNo->proximo = NULL;
+
+        if(tempUs.id > maiorID){//Organiza os usuário para não repetir o id
+            maiorID = tempUs.id;
         }
 
-        novoNo->dados=tempUs; //copia os dados
-        novoNo->proximo=NULL;
-
-        //Atuliza o novo usuário (id)
-        if(tempUs.id>=proxID){
-            proxID=tempUs.id + 1;
-        }
-
-        //Insere na lista (no final)
-        if(inicioUs==NULL){
-            inicioUs=novoNo;
+        if(inicioUs == NULL){//verifica se há algum profissional cadastrado
+            inicioUs = novoNo;
         }else{
-            NoUsuario *atual=inicioUs;
-            while(atual->proximo!=NULL){
-                atual=atual->proximo;
+            NoUsuario *atual = inicioUs;//ponteiro auxiliar (atual) para organizar os nós
+            while(atual->proximo != NULL){//loop que faz o ponteiro ir até o último da fila
+                atual = atual->proximo;
             }
-            atual->proximo=novoNo;
+            atual->proximo = novoNo;//nó alocado no último da fila
         }
         cont++;
     }
+    proxID = maiorID + 1; //incrementa o id para o próximo cadastro não repetir
     fclose(arquivo);
-    printf("Dados de usuarios carregados (%d usuarios). Proximo ID a ser usado: %d.\n", cont, proxID);
+    printf("Dados carregados: %d usuarios.\n", cont);
 }
 
-void adicionarUsuario(int cpf, int contato, int idade, char regiao, const char *nome, const char *email, const char *descricao){
-    //Alocação de memória dinâmica (MALLOC)
-    NoUsuario *novoNo = (NoUsuario *)malloc(sizeof(NoUsuario));
+void addUsuario(char *senha, long long int cpf, long long int contato, int idade, char regiao, const char *nome, const char *email, const char *descricao){
+    NoUsuario *novoNo = (NoUsuario *)malloc(sizeof(NoUsuario));//converte o ponteiro recebido pelo malloc para do tipo NoUsuario
 
-    if(novoNo==NULL){
-        printf("Falha na alocacao para o novo usuario.\n");
+    if(novoNo == NULL){
+        printf("Falha na alocacao.\n");
         return;
     }
+    //alocando as informações no Nó
+    novoNo->dados.id = proxID++;
+    novoNo->dados.cpf = cpf;
+    novoNo->dados.contato = contato;
+    novoNo->dados.idade = idade;
+    novoNo->dados.regiao = regiao;
 
-    //Preenchimento dos Dados
-    novoNo->dados.id=proxID++;
-    novoNo->dados.cpf=cpf;
-    novoNo->dados.contato=contato;
-    novoNo->dados.idade=idade;
-    novoNo->dados.regiao=regiao;
+    strncpy(novoNo->dados.nome, nome, 50); 
+    novoNo->dados.nome[49] = '\0';
+    strncpy(novoNo->dados.email, email, 50); 
+    novoNo->dados.email[49] = '\0';
+    strncpy(novoNo->dados.senha, senha, 20); 
+    novoNo->dados.senha[19] = '\0';
+    strncpy(novoNo->dados.descricao, descricao, 200); 
+    novoNo->dados.descricao[199] = '\0';
 
-    strncpy(novoNo->dados.nome, nome, 50);
-    novoNo->dados.nome[50]='\0';
-    strncpy(novoNo->dados.email, email, 50);
-    novoNo->dados.email[50]='\0';
-    strncpy(novoNo->dados.descricao, descricao, 200);
-    novoNo->dados.descricao[200]='\0';
-    novoNo->dados.regiao=regiao;
+    novoNo->proximo = NULL;//garante que o próximo nó seja NULL
 
-    novoNo->proximo=NULL;//garantindo que o último da fila seja NULL
-
-    //Inserção na lista (no final)
-    if(inicioUs==NULL){
-        inicioUs=novoNo;
+    if(inicioUs == NULL){
+        inicioUs = novoNo;
     }else{
         NoUsuario *atual = inicioUs;
-        while(atual->proximo!=NULL){
-            atual=atual->proximo;
+        while(atual->proximo != NULL){//loop para caminhar nos pelos nós até chegar no último (NULL)
+            atual = atual->proximo;
         }
-        atual->proximo=novoNo;
+        atual->proximo = novoNo;//alocando o novo Nó no fim da fila
     }
-    printf("\nUsuario %s cadastrado com sucesso", novoNo->dados.nome);
+    printf("\nUsuario %s cadastrado com sucesso (ID: %d)\n", novoNo->dados.nome, novoNo->dados.id);
+    cadastroProfis(); // Salva automaticamente após cadastrar
+}
+
+//Procedimento apenas para o adm para excluir usuario
+void excluirUsuario(int id){
+    NoUsuario *atual = inicioUs;
+    NoUsuario *anterior = NULL;
+
+    //Procura o usuário na lista
+    while(atual != NULL && atual->dados.id != id){
+        anterior = atual;
+        atual = atual->proximo;
+    }
+    
+    if(atual == NULL){// Se chegou no fim e não achou
+        printf("\nErro: Usuario nao encontrado.\n");
+        return;
+    }
+
+    //Se achou, verifica se é o primeiro da lista ou um do meio/fim
+    if(anterior == NULL){
+        inicioUs = atual->proximo;//Era o primeiro da lista
+    } else {
+        anterior->proximo = atual->proximo;//Era um nó do meio ou fim
+    }
+
+    printf("\nSUCESSO: Usuario '%s' (ID: %d) foi excluido.\n", atual->dados.nome, id);
+    free(atual); //Libera a memória
+    
+    cadastroProfis(); //Atualiza o arquivo 
 }
 
 void listarUsuarios(){
     NoUsuario *atual = inicioUs;
 
-    if(atual==NULL){
+    if(atual == NULL){
         printf("\nNenhum usuario cadastrado.\n");
         return;
     }
 
-    printf("\n--- LISTA DE USUARIOS ---\n");
-    while(atual!=NULL){
-        printf("ID: %d | Nome: %s | email: %s| Contato: %d\n", atual->dados.id, atual->dados.nome, atual->dados.email, atual->dados.contato);
-        atual=atual->proximo;
+    printf("\n---| LISTA DE PROFISSIONAIS |---\n");
+    while(atual != NULL){
+        printf("ID: %d | Nome: %s | Regiao: %c | Especialidade: %s | Contato: %lld\n", atual->dados.id, atual->dados.nome, atual->dados.regiao, atual->dados.descricao, atual->dados.contato);
+        atual = atual->proximo;
     }
-    printf("------------------------\n");
-}
-
-void buscarPorRegiao(char regiaoBuscada){
-	NoUsuario *atual = inicioUs;
-	int encontrou = 0;
-	
-	printf("\n---PROFISSIONAIS DA REGIAO %c ---\n", regiaoBuscada);
-	
-	while(atual != NULL){
-		if(atual->dados.regiao == regiaoBuscada){
-			printf("ID: %d | Nome: %s | Contato: %d | Email: %s\n", 
-			atual->dados.id,
-			atual->dados.nome,
-			atual->dados.contato,
-			atual->dados.email);
-		
-		encontrou = 1;
-		}
-		
-		atual = atual->proximo;
-	}
-	
-	if(!encontrou){
-		printf("Nenhum profissional encontrado nessa regiao. \n");
-	}
-	
-	printf("-------------------------------------------\n");
+    printf("------------------------------\n");
 }
 
 void liberarMem(){
     NoUsuario *atual = inicioUs;
     NoUsuario *proximo;
 
-    while(atual!=NULL){
-        proximo=atual->proximo;
-        free(atual);    //Libera memoria alocada pelo Malloc
-        atual=proximo;
+    while(atual != NULL){
+        proximo = atual->proximo;
+        free(atual);
+        atual = proximo;
     }
-    inicioUs=NULL;
-    printf("\nMemoria de todos os usuarios liberada com sucesso.\n");
+    inicioUs = NULL;
 }
+
+//Perfil do administrador
+void menuAdmin(){
+    int opcaoAdm, idExcluir;
+
+    do {
+        printf("\n===| PAINEL DO ADMINISTRADOR |===\n");
+        printf("1. Listar todos os usuarios\n");
+        printf("2. Excluir um usuario (pelo ID)\n");
+        printf("0. Sair do Painel Admin\n");
+        printf("Escolha: ");
+        scanf("%d", &opcaoAdm);
+        while(getchar() != '\n');//limpa o buffer depois do scanf
+
+        switch(opcaoAdm){
+            case 1:
+                listarUsuarios();
+                break;
+            case 2:
+                listarUsuarios(); //para ver o ID e selecionar qual será excluído
+                printf("\nInforme o ID do usuario que deseja EXCLUIR: ");
+                scanf("%d", &idExcluir);
+                while(getchar() != '\n');
+                // Confirmação simples
+                printf("Tem certeza? (1-Sim / 0-Nao): ");
+                int confirm;
+                scanf("%d", &confirm);
+                while(getchar() != '\n');
+
+                if(confirm == 1) {
+                    excluirUsuario(idExcluir);
+                } else {
+                    printf("Operacao cancelada.\n");
+                }
+                break;
+            case 0:
+                printf("Saindo do perfil adm\n");
+                break;
+            default:
+                printf("Opcao invalida. Tente novamente.\n");
+        }
+    } while(opcaoAdm != 0);
+}
+
+void profisLogin(){
+    char emailLogin[50], senhaLogin[20];
+    int encontrado = 0;
+
+    //getchar(); //Limpa buffer se necessário}
+    printf("\n---| LOGIN |---\nEmail: ");
+    fgets(emailLogin, sizeof(emailLogin), stdin);
+    emailLogin[strcspn(emailLogin, "\n")] = '\0';
+
+    printf("Senha: ");
+    fgets(senhaLogin, sizeof(senhaLogin), stdin);
+    senhaLogin[strcspn(senhaLogin, "\n")] = '\0';
+
+    //Verifica se é adm
+    if(strcmp(emailLogin, ADMIN_EMAIL) == 0 && strcmp(senhaLogin, ADMIN_SENHA) == 0){
+        printf("\n\n>>>| BEM-VINDO ADMINISTRADOR |<<<\n");
+        menuAdmin(); //Chama o menu exclusivo
+        return;
+    }
+
+    //Se não for adm, verifica usuários normais
+    NoUsuario *atual = inicioUs;
+    while(atual != NULL){
+        if(strcmp(atual->dados.email, emailLogin) == 0){
+            encontrado=1;
+            if(strcmp(atual->dados.senha, senhaLogin) == 0){
+                printf("\n\t| Login realizado com sucesso |\n\tBem vindo(a), %s\n", atual->dados.nome);
+            }else{
+                printf("\n\t| Senha incorreta. Tente novamente |\n");
+            }
+            break;
+        }
+        atual = atual->proximo;
+    }
+    if(!encontrado){
+        printf("\n>>>| Usuario nao cadastrado |<<<\n");
+    }
+}
+
