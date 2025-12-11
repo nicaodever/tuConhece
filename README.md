@@ -12,13 +12,26 @@
     <b>Aplicação em C que conecta clientes a profissionais hidráulicos com foco em agilidade e segurança. Possui sistema de pré-diagnóstico de problemas e filtros por localidade e gênero.</b>
 </p>
 
-<h2 id="func">💻 Principais Funcionalidades</h2>
+<h2 id="func">Principais Funcionalidades</h2>
 
-- Linguagem C
-- Makefile
-- Bibliotecas Padrão
+<h3>Perfil Cliente</h3>
 
-<h2 id="func">💻 Tecnologias</h2>
+1. Gestão de conta: Visualização da listagem dos profissionais hidráulicos disponíveis com informações básicas como nome, sexo, região e descrição;
+2. Filtragem: Buscar profissionais por região e/ou por sexo.
+
+<h3>Perfil Profissional</h3>
+
+1. Cadastro das suas principais informações como: nome, região, cpf, contato e etc;
+2. Poder descrever suas principais atribuições como encanador e poder aumentar sua rede de clientes.
+
+<h3>Perfil Administrador</h3>
+
+1. Dashboard: listagem geral dos profissionais com suas identificações pelo ID;
+2. Selecionar perfil pelo ID;
+3. Poder excluir um perfil da listagem de profissionais.
+
+
+<h2 id="tech">💻 Tecnologias</h2>
 
 - Linguagem C
 - Makefile
