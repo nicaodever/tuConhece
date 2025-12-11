@@ -4,6 +4,16 @@
 #include <ctype.h>
 #include "moduleRegisterClient.h"
 
+
+/* ----------------- CONFIGURAÇÃO DE CORES (ANSI) ----------------- */
+#define RESET   "\033[0m"
+#define RED     "\033[1;31m"
+#define GREEN   "\033[1;32m"
+#define YELLOW  "\033[1;33m"
+#define BLUE    "\033[1;34m"
+#define CYAN    "\033[1;36m"
+#define BOLD    "\033[1m"
+
 static Dados userLog;
 
 
@@ -45,7 +55,7 @@ void cadastroCliente(char *nome,char *email,char *senha,char regiao){
   //escreve no arquivo index
   fwrite(&idx,sizeof(Index),1,fileIndex);
   fclose(fileIndex);
-
+	printf("Cadastrado com sucesso");
 }
 
 // gerador de id
@@ -87,33 +97,72 @@ int idCliente(){
 
 //valida o login 
 void loginCliente(char *email,char *senha){
-  FILE *file = fopen("cliente.dat","rb");
-  if(file == NULL){
-    printf("Erro ao abrir arquivo para leitura!");
-    return;
-  }
-  
-  Dados data;
-  int cmpEmail;
-  int cmpSenha;
-  //pecorre o arquivo e compara se o login esta correto
-  while(fread(&data,sizeof(Dados),1,file) == 1){
-    cmpEmail = strcmp(data.email,email);
-    cmpSenha = strcmp(data.senha,senha);
+    // remover quebra de linha
+    email[strcspn(email, "\n")] = 0;
+    senha[strcspn(senha, "\n")] = 0;
 
-    if(cmpEmail == 0 && cmpSenha == 0){
-      printf("Usuario encontrado, segue para pagina do cliente!");
-      userLog = data;
-      fclose(file);
-      return;
-      
+    FILE *file = fopen("cliente.dat","rb");
+    if(file == NULL){
+        printf("Erro ao abrir arquivo para leitura!");
+        return;
     }
-  }  
-    printf("Usuario nao encontrado ou nao cadastrado!");
-    fclose(file); 
-    
-}
 
+    Dados data;
+    while (fread(&data, sizeof(Dados), 1, file) == 1) {
+
+        if(strcmp(data.email, email) == 0 && strcmp(data.senha, senha) == 0){
+            printf("Usuario encontrado!");
+            menuCliente();
+            userLog = data;
+            fclose(file);
+            return;
+        }
+    }
+    printf("Usuario nao encontrado!");
+    fclose(file);
+}
+/* ----------------- MENU Cliente ----------------- */
+void menuCliente() {
+    int op;
+    char regiao;
+    do {
+        printf(CYAN BOLD "\n========== ÁREA DO Cliente ==========\n" RESET);
+        printf(YELLOW "1." RESET " Listar Profissionais\n");
+        printf(YELLOW "2." RESET " Filtrar por Região\n");
+        printf(YELLOW "0." RESET " Sair\n");
+
+        printf("\nEscolha: ");
+        if (scanf("%d", &op) != 1) {
+            while (getchar() != '\n');
+            op = -1;
+            continue;
+        }
+        while (getchar() != '\n');
+  switch(op) {
+
+            case 1:
+                listarUsuarios();
+                break;
+                
+             case 2:
+			 	
+             	printf("Escolha uma região(n/s/l/o): ");
+    			scanf("%c", &regiao);
+			    buscarPorRegiao(regiao);  
+
+            case 0:
+                printf(RED "\nVoltando...\n" RESET);
+                break;
+
+            default:
+                printf(RED "Opção inválida!\n" RESET);
+        }
+
+        printf(YELLOW "\nPressione ENTER para continuar..." RESET);
+        getchar();
+
+    } while(op != 0);
+}
 void perfilCliente(){
   printf("\n|----Dados do Perfil----|\n");
   printf("|  Id: %d\n",userLog.id);
