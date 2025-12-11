@@ -10,7 +10,7 @@ typedef struct{
   char nome[50], email[50], descricao[200], senha[20];
   long long int cpf, contato; //para caber mais digitos
   int id, idade;
-  char regiao;
+  char regiao, sexo;
 } usuario;
 
 typedef struct No{
@@ -22,7 +22,7 @@ void liberarMem();
 void acessarProfis();
 void cadastroProfis();
 void profisLogin();
-void addUsuario(char *senha, long long int cpf, long long int contato, int idade, char regiao, const char *nome, const char *email, const char *descricao);
+void addUsuario(char *senha, long long int cpf, long long int contato, int idade, char regiao, char sexo, const char *nome, const char *email, const char *descricao);
 void listarUsuarios();
 void excluirUsuario(int id); 
 void menuAdmin();           
@@ -43,7 +43,7 @@ void cadastroProfis(){
     int cont = 0;
 
     while(atual != NULL){
-        fprintf(arquivo, "%d;%lld;%lld;%d;%s;%s;%s;%s;%c\n", atual->dados.id, atual->dados.cpf, atual->dados.contato, atual->dados.idade, atual->dados.nome, atual->dados.email, atual->dados.senha, atual->dados.descricao, atual->dados.regiao);
+        fprintf(arquivo, "%d;%lld;%lld;%d;%s;%s;%s;%s;%c;%c\n", atual->dados.id, atual->dados.cpf, atual->dados.contato, atual->dados.idade, atual->dados.nome, atual->dados.email, atual->dados.senha, atual->dados.descricao, atual->dados.regiao, atual->dados.sexo);
         atual = atual->proximo;
         cont++;
     }
@@ -68,8 +68,8 @@ void acessarProfis(){
     int cont = 0;
     int maiorID = 0; // Para ajustar o proxID corretamente
 
-//lê o arquivo seguindo o padrão definindo por (;) e verificando se foi lido a qtd certa (9) de informações
-    while(fscanf(arquivo, "%d;%lld;%lld;%d;%50[^;];%50[^;];%20[^;];%200[^;];%c\n", &tempUs.id, &tempUs.cpf, &tempUs.contato, &tempUs.idade, tempUs.nome, tempUs.email, tempUs.senha, tempUs.descricao, &tempUs.regiao) == 9){
+//lê o arquivo seguindo o padrão definindo por (;) e verificando se foi lido a qtd certa (10) de informações
+    while(fscanf(arquivo, "%d;%lld;%lld;%d;%50[^;];%50[^;];%20[^;];%200[^;];%c;%c\n", &tempUs.id, &tempUs.cpf, &tempUs.contato, &tempUs.idade, tempUs.nome, tempUs.email, tempUs.senha, tempUs.descricao, &tempUs.regiao, &tempUs.sexo) == 10){
         
         NoUsuario *novoNo = (NoUsuario *)malloc(sizeof(NoUsuario));//solicitando memória do sistema para criar um novo Nó
         if(novoNo == NULL) //caso não haja memória e o procedimento não trave o sistema
@@ -98,7 +98,7 @@ void acessarProfis(){
     printf("Dados carregados: %d usuarios.\n", cont);
 }
 
-void addUsuario(char *senha, long long int cpf, long long int contato, int idade, char regiao, const char *nome, const char *email, const char *descricao){
+void addUsuario(char *senha, long long int cpf, long long int contato, int idade, char regiao, char sexo, const char *nome, const char *email, const char *descricao){
     NoUsuario *novoNo = (NoUsuario *)malloc(sizeof(NoUsuario));//converte o ponteiro recebido pelo malloc para do tipo NoUsuario
 
     if(novoNo == NULL){
@@ -111,6 +111,7 @@ void addUsuario(char *senha, long long int cpf, long long int contato, int idade
     novoNo->dados.contato = contato;
     novoNo->dados.idade = idade;
     novoNo->dados.regiao = regiao;
+    novoNo->dados.sexo = sexo;
 
     strncpy(novoNo->dados.nome, nome, 50); 
     novoNo->dados.nome[49] = '\0';
@@ -175,7 +176,7 @@ void listarUsuarios(){
 
     printf("\n---| LISTA DE PROFISSIONAIS |---\n");
     while(atual != NULL){
-        printf("ID: %d | Nome: %s | Regiao: %c | Especialidade: %s | Contato: %lld\n", atual->dados.id, atual->dados.nome, atual->dados.regiao, atual->dados.descricao, atual->dados.contato);
+        printf("ID: %d | Nome: %s | Sexo: %c | Regiao: %c | Especialidade: %s | Contato: %lld\n", atual->dados.id, atual->dados.nome, atual->dados.sexo, atual->dados.regiao, atual->dados.descricao, atual->dados.contato);
         atual = atual->proximo;
     }
     printf("------------------------------\n");
@@ -278,7 +279,8 @@ void profisLogin(){
 int main(){
     int opcao, idade;
     long long int contato, cpf;
-    char nome[50], email[50], descricao[200], senha[20], regiao;
+    char nome[50], email[50], descricao[200], senha[20];
+    char regiao, sexo;
 
     acessarProfis(); //Carrega dados ao iniciar
 
@@ -317,17 +319,20 @@ int main(){
                 scanf("%d", &idade);
                 
                 printf("Informe seu CPF: ");
-                scanf("%d", &cpf);
+                scanf("%lld", &cpf);
 
                 printf("Informe seu numero de contato: ");
-                scanf("%d", &contato);
+                scanf("%lld", &contato);
                 
                 printf("Informe sua zona (Norte (n), Sul(s), Leste(l), Oeste(o)): ");
                 scanf(" %c", &regiao);
 
-                while(getchar() != '\n');//para evitar levar lixo para o menu
+                printf("Informe seu sexo (m - Masculino | f - Feminino): ");
+                scanf(" %c", &sexo);
 
-                addUsuario(senha, cpf, contato, idade, regiao, nome, email, descricao);
+                while(getchar() != '\n');//para evitar levar lixo para o menu ao reiniciar
+
+                addUsuario(senha, cpf, contato, idade, regiao, sexo, nome, email, descricao);
                 break;
 
             case 2:
