@@ -12,7 +12,7 @@
     <b>Aplicação em C que conecta clientes a profissionais hidráulicos com foco em agilidade e segurança. Possui sistema de pré-diagnóstico de problemas e filtros por localidade e gênero.</b>
 </p>
 
-<h2 id="func">Principais Funcionalidades</h2>
+<h2 id="func"> :sparkles: Principais Funcionalidades</h2>
 
 <h3>Perfil Cliente</h3>
 
