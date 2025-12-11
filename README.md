@@ -9,7 +9,7 @@
 </p>
 
 <p align="center">
-    <b>Aplicação em C que conecta clientes a profissionais hidráulicos com foco em agilidade e segurança. Possui sistema de pré-diagnóstico de problemas e filtros por localidade e gênero.</b>
+    <b>Aplicação em C que conecta clientes a profissionais hidráulicos com foco em agilidade e segurança. Possui sistema de pré-diagnóstico de problemas e filtro por localidade.</b>
 </p>
 
 <h2 id="func"> :sparkles: Principais Funcionalidades</h2>
