@@ -17,7 +17,7 @@
 <h3>Perfil Cliente</h3>
 
 1. Gestão de conta: Visualização da listagem dos profissionais hidráulicos disponíveis com informações básicas como nome, sexo, região e descrição;
-2. Filtragem: Buscar profissionais por região e/ou por sexo.
+2. Filtragem: Buscar profissionais por região.
 
 <h3>Perfil Profissional</h3>
 
