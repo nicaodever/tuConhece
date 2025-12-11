@@ -1,6 +1,7 @@
 <h1 align="center" style="font-weight: bold;">TuConhece? </h1>
 
 <p align="center">
+ <a href="#func">PrincipaisFuncionalidades</a> •
  <a href="#tech">Tecnologias</a> • 
  <a href="#started">Como usar</a> • 
  <a href="#colab">Colaboradores</a> •
@@ -11,7 +12,13 @@
     <b>Aplicação em C que conecta clientes a profissionais hidráulicos com foco em agilidade e segurança. Possui sistema de pré-diagnóstico de problemas e filtros por localidade e gênero.</b>
 </p>
 
-<h2 id="tecnologias">💻 Tecnologias</h2>
+<h2 id="func">💻 Principais Funcionalidades</h2>
+
+- Linguagem C
+- Makefile
+- Bibliotecas Padrão
+
+<h2 id="func">💻 Tecnologias</h2>
 
 - Linguagem C
 - Makefile
@@ -41,7 +48,6 @@ Via IDE (Dev-C++, Clion, CodeBlocks):
 
 <h2 id="colab">🤝 Colaboradores</h2>
 
-Special thank you for all people that contributed for this project.
 
 <table>
   <tr>
@@ -71,17 +77,17 @@ Special thank you for all people that contributed for this project.
     </td>
     <td align="center">
       <a href="#">
-        <img src="https://avatars.githubusercontent.com/u/225101709?v=4" width="100px;" alt="Adrielly Lima Github"/><br>
+        <img src="https://avatars.githubusercontent.com/u/106486611?v=4" width="100px;" alt="Pedro Github"/><br>
         <sub>
-          <b>Adrielly Lima</b>
+          <b>Pedro L.</b>
         </sub>
       </a>
     </td>
     <td align="center">
       <a href="#">
-        <img src="https://avatars.githubusercontent.com/u/225101709?v=4" width="100px;" alt="Adrielly Lima Github"/><br>
+        <img src="https://avatars.githubusercontent.com/u/106486611?v=4" width="100px;" alt="Adrielly Lima Github"/><br>
         <sub>
-          <b>Adrielly Lima</b>
+          <b>Emanuel Oliveira</b>
         </sub>
       </a>
     </td>
