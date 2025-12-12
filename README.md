@@ -1,7 +1,4 @@
-<<<<<<< HEAD
-# TuConhece?
-## projeto que facilita o encontro de profissionais hidraulicos
-=======
+
 <h1 align="center" style="font-weight: bold;">TuConhece? </h1>
 
 <p align="center">
