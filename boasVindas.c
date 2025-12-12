@@ -45,16 +45,6 @@ int get_terminal_width() {
     return columns;
 }
 
-/* ---------- CENTRALIZAR (usa largura dinâmica) ---------- */
-void centralizar(const char *texto) {
-	int i = 0;
-    int largura = get_terminal_width();
-    int tamVis = strlenSemAnsi(texto);
-    int espacos = (largura - tamVis) / 2;
-    if (espacos < 0) espacos = 0;
-    for (i = 0; i < espacos; i++) putchar(' ');
-    printf("%s", texto);
-}
 
 /* ---------- TYPEWRITER (imprime com efeito de digitação) ---------- */
 void typewriter_center(const char *texto, int delay_ms) {
@@ -65,11 +55,9 @@ void typewriter_center(const char *texto, int delay_ms) {
     if (espacos < 0) espacos = 0;
 
     for (i = 0; i < espacos; i++) putchar(' ');
-    // imprimimos respeitando códigos ANSI: iteramos e imprimimos char a char,
-    // mas pulamos sleeping enquanto dentro de códigos ANSI
     const char *p = texto;
     while (*p) {
-        if (*p == '\033') { // imprime todo o código ANSI sem delay
+        if (*p == '\033') { 
             const char *start = p;
             putchar(*p); p++;
             if (*p == '[') {
@@ -86,26 +74,7 @@ void typewriter_center(const char *texto, int delay_ms) {
     }
 }
 
-/* ---------- BARRA DE PROGRESSO CENTRALIZADA ---------- */
-void progress_bar_centered(int percent, int width_bar) {
-	int i = 0;
-    int largura = get_terminal_width();
-    int tamVis = width_bar + 2 + 5; // [bar] + space + "100%"
-    int espacos = (largura - tamVis) / 2;
-    if (espacos < 0) espacos = 0;
 
-    for (i = 0; i < espacos; i++) putchar(' ');
-    putchar('[');
-    int filled = (percent * width_bar) / 100;
-    for (i = 0; i < width_bar; i++) {
-        if (i < filled) putchar('#');
-        else putchar(' ');
-    }
-    putchar(']');
-    printf(" %3d%%", percent);
-}
-
-/* ---------- BOAS-VINDAS APRIMORADA ---------- */
 void boasVindas() {
     system("cls || clear");
 
@@ -119,15 +88,15 @@ void boasVindas() {
     char *title2 = CYAN "            Plataforma de Conexão entre Profissionais " RESET "\n";
     char *empty = "\n";
 
-    // Print a nice boxed header (centralizado)
-    centralizar(top);
-    centralizar(title1);
-    centralizar(title2);
-    centralizar(top);
-    centralizar(empty);
+    
+    printf(top);
+    printf(title1);
+    printf(title2);
+    printf(top);
+    printf(empty);
 
     // Prompt
-    centralizar(YELLOW "Pressione qualquer tecla para iniciar o carregamento..." RESET "\n");
+    printf(YELLOW "Pressione qualquer tecla para iniciar o carregamento..." RESET "\n");
     
     getch();
 }

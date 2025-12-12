@@ -7,7 +7,6 @@
 #include "moduleRegisterClient.h"
 
 int main(){
-	 system("mode con: cols=50 lines=40");
     setlocale(LC_ALL, "pt_BR.UTF-8");
     setlocale(LC_ALL, "Portuguese_Brazil.1252");
     setlocale(LC_ALL, "");
@@ -23,7 +22,7 @@ int main(){
         system("cls || clear");
 
         printf("\033[1;36m=============================================\n\033[0m");
-        printf("\033[1;36m            Não tem login? Registre-se        \n\033[0m");
+        printf ("\033[1;36m            Não tem login? Registre-se        \n\033[0m");
         printf("\033[1;36m=============================================\n\n\033[0m");
 
         printf("\033[1;37m[1]\033[0m Registrar-me\n");

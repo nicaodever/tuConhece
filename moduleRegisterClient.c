@@ -112,9 +112,9 @@ void loginCliente(char *email,char *senha){
 
         if(strcmp(data.email, email) == 0 && strcmp(data.senha, senha) == 0){
             printf("Usuario encontrado!");
-            menuCliente();
             userLog = data;
             fclose(file);
+            menuCliente();
             return;
         }
     }
@@ -129,6 +129,9 @@ void menuCliente() {
         printf(CYAN BOLD "\n========== ÁREA DO Cliente ==========\n" RESET);
         printf(YELLOW "1." RESET " Listar Profissionais\n");
         printf(YELLOW "2." RESET " Filtrar por Região\n");
+        printf(YELLOW "3." RESET " Entender meu problema\n");
+        printf(YELLOW "4." RESET " Visualizar perfil\n");
+         printf(YELLOW "5." RESET " Atualizar perfil\n");
         printf(YELLOW "0." RESET " Sair\n");
 
         printf("\nEscolha: ");
@@ -148,8 +151,18 @@ void menuCliente() {
 			 	
              	printf("Escolha uma região(n/s/l/o): ");
     			scanf("%c", &regiao);
-			    buscarPorRegiao(regiao);  
-
+			    buscarPorRegiao(regiao);
+				break;  
+            case 3: 
+               moduleDiagnostico();
+               break;
+               
+            case 4: 
+				perfilCliente();
+				break;   
+            case 5:
+            	atualizarDados();
+            	break;
             case 0:
                 printf(RED "\nVoltando...\n" RESET);
                 break;
@@ -173,142 +186,138 @@ void perfilCliente(){
   printf("|-----------------------|\n");
 }
 //atualiza os dados do cliente logado
-void atualizarDados(){
-  // cria uma struct temporaria
-  Dados temp = userLog;
-  char input[100];
-  int escolha = 0;
-  int alterado = 0; //flag
+void atualizarDados() {
+    Dados temp = userLog;
+    char input[100];
+    int escolha = 0;
+    int alterado = 0;
 
-  printf("\n|----Atualizar dados do Perfil ID: %d----\n",userLog.id);
+    system("cls || clear");
 
-  //menu
-  while(escolha != 5){
-    printf("/n0 que deseja alterar?\n");
-    printf("1. Nome: %s\n",temp.nome);
-    printf("2. Email: %s\n",temp.email);
-    printf("3. Senha: %s\n",temp.senha);
-    printf("4. Regiao: %c\n",temp.regiao);
-    printf("5. Salvar e Sair\n");
-    printf("Escolha: ");
+    printf("\033[1;36m+--------------------------------------------------------------+\n");
+    printf("|           ATUALIZAR DADOS DO PERFIL (ID: %d)                |\n", userLog.id);
+    printf("+--------------------------------------------------------------+\033[0m\n");
 
-    //le a escolha do usuario
-    if(scanf("%d",&escolha) != 1){
-      //limpa o buffer
-      while(getchar() != '\n');
-      escolha = 0;
-      continue;
-    }
-    while(getchar() != '\n'); // limpa o buffer depois do scanf
-    
+    while (escolha != 5) {
 
-    if(escolha >= 1 && escolha <= 4){
+        printf("\n\033[1;33mO que deseja alterar?\033[0m\n");
+        printf("\033[1;32m1.\033[0m Nome   : %s\n", temp.nome);
+        printf("\033[1;32m2.\033[0m Email  : %s\n", temp.email);
+        printf("\033[1;32m3.\033[0m Senha  : %s\n", temp.senha);
+        printf("\033[1;32m4.\033[0m Regiao : %c\n", temp.regiao);
+        printf("\033[1;32m5.\033[0m Salvar e Sair\n");
+        printf("Escolha: ");
 
-      if(strlen(input) > 0){
-        alterado = 1;
-        switch(escolha){
-          case 1: 
-            
-            printf("\nDigite o novo nome:\n");
-            while(1){
-              int flag = 1;
-              fgets(input,sizeof(input),stdin);
-              input[strcspn(input,"\n")] = 0;
-              int i;
-              for(i = 0;i < strlen(input);i++){
-                if(!isalpha(input[i])){
-                printf("\nO nome deve conter apenas letras.\n");
-                flag = 0;
-                break;
-                }
-              }
-              if(flag == 1){
-                break;
-              }
-            }
-            strcpy(temp.nome,input);
-            break;
-          case 2: 
-            printf("\nDigite o novo email:\n");
-            fgets(input,sizeof(input),stdin);
-            input[strcspn(input,"\n")] = 0;
-            strcpy(temp.email,input); 
-            break;
-          case 3: 
-            printf("\nDigite a nova senha:\n");
-            fgets(input,sizeof(input),stdin);
-            input[strcspn(input,"\n")] = 0;
-            strcpy(temp.senha,input); 
-            break;
-          case 4: 
-            temp.regiao = input[0]; 
-            printf("\nDigite apenas a inicial da regiao: Norte(n) Sul(s) Leste(l) Oeste(o)\n");
-            while(1){
-              input[0] = getchar();
-              getchar();
-              if(!isalpha(input[0])){//verifica se a entrada e uma letra
-                printf("Entrada invalida. Digite apenas letras.\n");
-                continue;
-              }
-              if(input[0] == 'n'|| input[0] == 's'|| input[0] == 'l'|| input[0] == 'o'){
-                temp.regiao = input[0];
-                break;
-              }else{
-                printf("Entrada invalida. Digite apenas as opcoes dadas.\n");
-              }
-
-            }
-          temp.regiao = input[0];
-          break;
+        if (scanf("%d", &escolha) != 1) {
+            while (getchar() != '\n');
+            escolha = 0;
+            continue;
         }
-      }else{
-        printf("Nenhuma alteracao feita neste campo.\n");
-      }
-    }else if(escolha == 5){
-      break;
-    }else{
-      printf("OpÃ§ao invalida.\n");
+        while (getchar() != '\n');
+
+        switch (escolha) {
+            case 1:
+                alterado = 1;
+                printf("\nDigite o novo nome:\n");
+                while (1) {
+                    int valido = 1;
+                    fgets(input, sizeof(input), stdin);
+                    input[strcspn(input, "\n")] = 0;
+					int i = 0;
+                    for (i = 0; i < strlen(input); i++) {
+                        if (!isalpha(input[i])) {
+                            printf("O nome deve conter apenas letras.\n");
+                            valido = 0;
+                            break;
+                        }
+                    }
+                    if (valido) break;
+                }
+                strcpy(temp.nome, input);
+                break;
+
+            case 2:
+                alterado = 1;
+                printf("\nDigite o novo email:\n");
+                fgets(input, sizeof(input), stdin);
+                input[strcspn(input, "\n")] = 0;
+                strcpy(temp.email, input);
+                break;
+
+            case 3:
+                alterado = 1;
+                printf("\nDigite a nova senha:\n");
+                fgets(input, sizeof(input), stdin);
+                input[strcspn(input, "\n")] = 0;
+                strcpy(temp.senha, input);
+                break;
+
+            case 4:
+                alterado = 1;
+                printf("\nDigite a inicial da região (n/s/l/o): ");
+                while (1) {
+                    input[0] = getchar();
+                    getchar();
+
+                    if (!isalpha(input[0])) {
+                        printf("Entrada inválida. Digite apenas letras.\n");
+                        continue;
+                    }
+
+                    if (input[0]=='n' || input[0]=='s' || input[0]=='l' || input[0]=='o') {
+                        temp.regiao = input[0];
+                        break;
+                    } else {
+                        printf("Entrada inválida. Use apenas n/s/l/o.\n");
+                    }
+                }
+                break;
+
+            case 5:
+                break;
+
+            default:
+                printf("\033[1;31mOpção inválida!\033[0m\n");
+        }
     }
-  }
 
-  //usuario saiu, mas nao houve alteracao, apenas retorna
-  if(!alterado){
-    printf("\nNenhuma alteracao foi feita no perfil.\n");
-    return;
-  }
-
-  FILE *fileIndex = fopen("clienteIndex.dat","rb");
-  FILE *fileDados = fopen("cliente.dat","r+b");
-
-  if(fileIndex == NULL || fileDados == NULL){
-    printf("Erro ao abrir arquivos para gravacao");
-    if(fileIndex) fclose(fileIndex);
-    if(fileDados) fclose(fileDados);
-    return;
-  }
-
-  Index idx;
-  int sucesso = 0;
-
-  while(fread(&idx ,sizeof(Index), 1, fileIndex)){
-    if(idx.id == userLog.id){
-      fseek(fileDados,idx.pos,SEEK_SET);
-
-      fwrite(&temp,sizeof(Dados),1, fileDados);
-
-      userLog = temp;
-
-      printf("Perfil atualizado com sucesso!\n");
-      sucesso = 1;
-      break;
+    // Se nada foi alterado
+    if (!alterado) {
+        printf("\n\033[1;33mNenhuma alteração foi feita no perfil.\033[0m\n");
+        return;
     }
-  }
-  fclose(fileIndex);
-  fclose(fileDados);
 
-  if(!sucesso){
-    printf("\nErro: Nao foi possivel encontrar o ID para salvar.\n");
-  }
+    FILE *fileIndex = fopen("clienteIndex.dat","rb");
+    FILE *fileDados = fopen("cliente.dat","r+b");
 
+    if(!fileIndex || !fileDados){
+        printf("\033[1;31mErro ao abrir os arquivos!\033[0m\n");
+        if(fileIndex) fclose(fileIndex);
+        if(fileDados) fclose(fileDados);
+        return;
+    }
+
+    Index idx;
+    int sucesso = 0;
+
+    while (fread(&idx, sizeof(Index), 1, fileIndex)) {
+        if (idx.id == userLog.id) {
+            fseek(fileDados, idx.pos, SEEK_SET);
+            fwrite(&temp, sizeof(Dados), 1, fileDados);
+            userLog = temp;
+
+            printf("\n\033[1;32mPerfil atualizado com sucesso!\033[0m\n");
+
+            sucesso = 1;
+            break;
+        }
+    }
+
+    fclose(fileIndex);
+    fclose(fileDados);
+
+    if (!sucesso) {
+        printf("\033[1;31mErro: ID não encontrado para salvar.\033[0m\n");
+    }
 }
 

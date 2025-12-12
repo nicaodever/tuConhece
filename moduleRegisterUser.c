@@ -216,7 +216,7 @@ void excluirUsuario(int id) {
         anterior->proximo = atual->proximo;
     }
 
-   centralizar(RED "\nUsuario '%s' (ID: %d) excluido.\n" RESET, atual->dados.nome, id);
+   printf(RED "\nUsuario '%s' (ID: %d) excluido.\n" RESET, atual->dados.nome, id);
     free(atual);
     cadastroProfis();
 }
@@ -243,61 +243,52 @@ void listarUsuarios() {
     }
 }
 /* ----------------- FILTRAR POR REGIÃO ----------------- */
-void buscarPorRegiao(char regiaoBuscada){
-	NoUsuario *atual = inicioUs;
-	int encontrou = 0;
-	
-	system("cls || clear");
-	  
-	  
-	char regiao[20];
-	
-	regiaoBuscada = tolower(regiaoBuscada);
+void buscarPorRegiao(char regiaoBuscada) {
+    NoUsuario *atual = inicioUs;
+    int encontrou = 0;
 
-	switch (regiaoBuscada) {
-	    case 'n':
-	        strcpy(regiao, "NORTE");
-	        break;
-	
-	    case 's':
-	        strcpy(regiao, "SUL");
-	        break;
-	
-	    case 'l':
-	        strcpy(regiao, "LESTE");
-	        break;
-	
-	    case 'o':
-	        strcpy(regiao, "OESTE");
-	        break;
-	
-	    default:
-	        strcpy(regiao, "Região desconhecida");
-	        break;
-	}
-	
-	printf("\n---PROFISSIONAIS DA REGIAO %s ---\n", regiao);
-	
-	while(atual != NULL){
-		if(atual->dados.regiao == regiaoBuscada){
-			printf("ID: %d | Nome: %s | Contato: %d | Email: %s\n", 
-			atual->dados.id,
-			atual->dados.nome,
-			atual->dados.contato,
-			atual->dados.email);
-		
-		encontrou = 1;
-		}
-		
-		atual = atual->proximo;
-	}
-	
-	if(!encontrou){
-		printf("Nenhum profissional encontrado nessa regiao. \n");
-	}
-	
-	printf("-------------------------------------------\n");
+    system("cls || clear");
+
+    char regiao[20];
+
+    regiaoBuscada = tolower(regiaoBuscada);
+
+    switch (regiaoBuscada) {
+        case 'n': strcpy(regiao, "NORTE"); break;
+        case 's': strcpy(regiao, "SUL"); break;
+        case 'l': strcpy(regiao, "LESTE"); break;
+        case 'o': strcpy(regiao, "OESTE"); break;
+        default:  strcpy(regiao, "REGIÃO DESCONHECIDA"); break;
+    }
+
+    // Cabeçalho
+    printf("\n\033[1;33m+============================================+\033[0m\n");
+    printf("\033[1;33m|       PROFISSIONAIS DA REGIÃO %-10s |\033[0m\n", regiao);
+    printf("\033[1;33m+============================================+\033[0m\n\n");
+
+    // Listagem
+    while (atual != NULL) {
+        if (tolower(atual->dados.regiao) == regiaoBuscada) {
+
+            printf("\033[1;33m----------------------------------------------\033[0m\n");
+            printf("ID: %d\n", atual->dados.id);
+            printf("Nome: %s\n", atual->dados.nome);
+            printf("Contato: %d\n", atual->dados.contato);
+            printf("Email: %s\n", atual->dados.email);
+            printf("\033[1;33m----------------------------------------------\033[0m\n\n");
+
+            encontrou = 1;
+        }
+        atual = atual->proximo;
+    }
+
+    if (!encontrou) {
+        printf("\033[1;31mNenhum profissional encontrado nessa região.\033[0m\n\n");
+    }
+
+    printf("\033[1;33m+============================================+\033[0m\n");
 }
+
 /* ----------------- LIBERAR MEMÓRIA ----------------- */
 void liberarMem() {
     NoUsuario *atual = inicioUs;
@@ -444,7 +435,7 @@ void profisLogin() {
     char senhaLogin[20];
     int encontrado = 0;
 
-    centralizar(CYAN BOLD "========== LOGIN ==========\n" RESET);
+    printf(CYAN BOLD "========== LOGIN ==========\n" RESET);
     
 	boxCursorLeft();
     printf("Email: ");
@@ -458,7 +449,7 @@ void profisLogin() {
     if (strcmp(emailLogin, ADMIN_EMAIL) == 0 &&
         strcmp(senhaLogin, ADMIN_SENHA) == 0) {
 
-        centralizar(GREEN "\nBem-vindo, ADMIN!\n" RESET);
+        printf(GREEN "\nBem-vindo, ADMIN!\n" RESET);
         menuAdmin();
         return;
     }
@@ -468,7 +459,7 @@ void profisLogin() {
             encontrado = 1;
 
             if (strcmp(atual->dados.senha, senhaLogin) == 0) {
-                centralizar(GREEN "\nLogin realizado com sucesso!\nBem vindo(a), %s\n" RESET, atual->dados.nome);
+                printf(GREEN "\nLogin realizado com sucesso!\nBem vindo(a), %s\n" RESET, atual->dados.nome);
 
                 menuProfissional();  // CHAMA O MENU PROFISSIONAL
 
@@ -481,6 +472,6 @@ void profisLogin() {
     }
 
     if (!encontrado) {
-        centralizar(YELLOW "\nUsuário não encontrado!\n" RESET);
+        printf(YELLOW "\nUsuário não encontrado!\n" RESET);
     }
 }
